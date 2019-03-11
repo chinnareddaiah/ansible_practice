@@ -1,0 +1,58 @@
+sudo -i
+sudo yum-config-manager --enable epel
+yum repolist
+yum install ansible -y
+ansible --version
+https://aws.amazon.com/blogs/mt/running-ansible-playbooks-using-ec2-systems-manager-run-command-and-state-manager/
+created new user
+
+useradd -d /home/ansi -m ansi
+passwd ansi(new password awsdevops99)
+password -x -l ansi (to check password correct or not)
+add this users in sudousers file
+give the permission to edit the sudousers file using root user
+#sudo chown root:root /etc/sudoers
+#sudo chmod 0755 /etc/sudoers
+
+$vi /etc/sudoers
+
+add the  context and save
+
+#Ansible Admin user
+ansi ALL=NOPASSWD: ALL
+
+now login into ansi user
+
+su - ansi
+do ssh on this user
+ssh ansi@<ip on same host>
+it will get permission denied error so we need to do ssh-keys add
+lets generate ssh-keygen
+giving permission to this file and user as well
+$chmod 777 .ssh/
+$chown ansi:ansi .ssh/
+then go to inside .ssh floder  and create  a file called authorized_keys
+cd .ssh/
+vi authorized_keys
+paste the content of pub_key(id_rsa_pub) and save it
+and give permission to the file
+sudo chown ansi:ansi authorized_keys
+sudo chmod 600 authorized_keys
+lets copy the ssh key
+$ssh_copy_id ansi@<ip addr of same host>
+now you can able to login to ec2 user
+--------------
+change the ownership of etc/ansible(root user permission ) floder to ansi
+ansi$ sudo chown -R ansi:ansi /etc/ansible
+ansi$ chmod -R 777 /etc/ansible
+now lets add the ips host file and under local group  and save it
+cd into host
+[server]
+server ip
+[node]
+node pub ip ansible-user=ec2-user
+
+copy the ec2 pem file and give permission
+cmod 6000 tomcat.pem
+ansible -m ping all --priveate-key=tomcat.pem
+ 
